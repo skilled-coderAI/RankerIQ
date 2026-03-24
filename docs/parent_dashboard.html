@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent Dashboard — Riya</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --forest: #1a3a2a;
+    --forest-mid: #2d5c42;
+    --forest-light: #3d7a58;
+    --sage: #e8f0eb;
+    --sage-mid: #c8dace;
+    --cream: #faf8f3;
+    --warm-white: #ffffff;
+    --amber: #c4832a;
+    --amber-light: #f5e6ce;
+    --amber-pale: #fdf4e6;
+    --red-soft: #c0392b;
+    --red-pale: #fdecea;
+    --text-dark: #1a1a18;
+    --text-mid: #4a4a46;
+    --text-soft: #8a8a82;
+    --border: #e2e2da;
+    --shadow: 0 1px 3px rgba(26,58,42,0.08), 0 4px 16px rgba(26,58,42,0.04);
+    --shadow-card: 0 2px 8px rgba(26,58,42,0.06), 0 1px 2px rgba(26,58,42,0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+  }
+
+  /* ─── TOPBAR ─── */
+  .topbar {
+    background: var(--forest);
+    color: white;
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    letter-spacing: -0.3px;
+    color: white;
+  }
+  .topbar-brand span { color: #7ec89a; }
+  .topbar-right { display: flex; align-items: center; gap: 1rem; font-size: 13px; color: rgba(255,255,255,0.7); }
+  .topbar-right .wa-btn {
+    background: #25D366;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+    transition: opacity .15s;
+  }
+  .topbar-right .wa-btn:hover { opacity: .85; }
+
+  /* ─── CHILD SELECTOR ─── */
+  .child-bar {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--border);
+    padding: .75rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .child-info { display: flex; align-items: center; gap: 12px; }
+  .child-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--forest-light), var(--forest-mid));
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 600; font-size: 16px;
+  }
+  .child-name { font-size: 16px; font-weight: 600; color: var(--text-dark); }
+  .child-meta { font-size: 12px; color: var(--text-soft); margin-top: 1px; }
+  .streak-pill {
+    background: var(--amber-pale);
+    color: var(--amber);
+    border: 1px solid var(--amber-light);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* ─── MAIN LAYOUT ─── */
+  .main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+  /* ─── SECTION LABELS ─── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-soft);
+    margin-bottom: .75rem;
+  }
+
+  /* ─── HEALTH SCORE ROW ─── */
+  .health-row {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .health-card {
+    background: var(--forest);
+    border-radius: 16px;
+    padding: 1.5rem;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .health-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .health-card::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; left: -20px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+  }
+  .score-ring-wrap { position: relative; width: 120px; height: 120px; margin: .5rem 0; }
+  .score-ring-wrap canvas { position: absolute; top: 0; left: 0; }
+  .score-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .score-num { font-family: 'DM Serif Display', serif; font-size: 36px; line-height: 1; color: white; }
+  .score-denom { font-size: 12px; color: rgba(255,255,255,0.5); }
+  .health-label { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: .25rem; }
+  .health-title { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.6); margin-bottom: .25rem; text-transform: uppercase; letter-spacing: .5px; font-size: 11px; }
+  .health-verdict {
+    background: rgba(126,200,154,0.2);
+    color: #7ec89a;
+    border: 1px solid rgba(126,200,154,0.25);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-top: .75rem;
+    font-weight: 500;
+  }
+  .health-verdict.warn { background: rgba(196,131,42,0.2); color: #e9a84c; border-color: rgba(196,131,42,0.25); }
+
+  /* Stat cards */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .75rem;
+  }
+  .stat-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+  .stat-val { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--text-dark); line-height: 1; }
+  .stat-val.good { color: var(--forest-light); }
+  .stat-val.warn { color: var(--amber); }
+  .stat-label { font-size: 12px; color: var(--text-soft); margin-top: 4px; }
+  .stat-delta { font-size: 11px; margin-top: 6px; display: flex; align-items: center; gap: 3px; }
+  .delta-up { color: var(--forest-light); }
+  .delta-dn { color: var(--red-soft); }
+
+  /* ─── ALERT CARDS ─── */
+  .alerts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+  }
+  .alert-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    transition: transform .15s, box-shadow .15s;
+    cursor: pointer;
+  }
+  .alert-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .alert-top { padding: .9rem 1rem .6rem; border-bottom: 1px solid var(--border); }
+  .alert-type { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; margin-bottom: .3rem; }
+  .alert-type.red { color: var(--red-soft); }
+  .alert-type.amber { color: var(--amber); }
+  .alert-type.green { color: var(--forest-light); }
+  .alert-topic { font-size: 15px; font-weight: 600; color: var(--text-dark); line-height: 1.3; }
+  .alert-chapter { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+  .alert-bottom { padding: .6rem 1rem; display: flex; align-items: center; justify-content: space-between; }
+  .alert-stat { font-size: 12px; color: var(--text-mid); }
+  .alert-stat strong { color: var(--text-dark); }
+  .progress-bar-wrap { height: 4px; background: var(--sage); border-radius: 2px; flex: 1; margin-left: .75rem; }
+  .progress-bar-fill { height: 4px; border-radius: 2px; }
+  .fill-red { background: var(--red-soft); }
+  .fill-amber { background: var(--amber); }
+  .fill-green { background: var(--forest-light); }
+
+  /* ─── TWO COLUMN ─── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem; }
+
+  /* ─── CHART CARD ─── */
+  .chart-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+  .chart-title { font-size: 14px; font-weight: 600; margin-bottom: 1rem; color: var(--text-dark); display: flex; align-items: center; justify-content: space-between; }
+  .chart-title span { font-size: 11px; color: var(--text-soft); font-weight: 400; }
+  .chart-wrap { position: relative; height: 180px; }
+
+  /* ─── ACTIVITY FEED ─── */
+  .feed-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+  .feed-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .feed-header h4 { font-size: 14px; font-weight: 600; }
+  .feed-header .today-tag { font-size: 11px; background: var(--sage); color: var(--forest-mid); padding: 3px 8px; border-radius: 8px; font-weight: 500; }
+  .feed-item { padding: .85rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: flex-start; }
+  .feed-item:last-child { border-bottom: none; }
+  .feed-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .feed-icon.voice { background: #e8f0ff; }
+  .feed-icon.test { background: var(--sage); }
+  .feed-icon.practice { background: var(--amber-pale); }
+  .feed-icon.badge { background: #f0e8ff; }
+  .feed-body { flex: 1; }
+  .feed-body strong { font-size: 13px; font-weight: 500; color: var(--text-dark); display: block; }
+  .feed-body span { font-size: 12px; color: var(--text-soft); }
+  .feed-time { font-size: 11px; color: var(--text-soft); flex-shrink: 0; margin-top: 2px; }
+
+  /* ─── VOICE SESSION ─── */
+  .voice-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 1.5rem;
+  }
+  .voice-header {
+    background: var(--forest);
+    padding: .85rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+  }
+  .voice-header h4 { font-size: 14px; font-weight: 500; }
+  .voice-header span { font-size: 12px; color: rgba(255,255,255,0.6); }
+  .voice-transcript { padding: 1rem 1.25rem; }
+  .transcript-row { display: flex; gap: 10px; margin-bottom: .75rem; align-items: flex-start; }
+  .t-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; padding: 2px 8px; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+  .t-label.ai { background: var(--sage); color: var(--forest-mid); }
+  .t-label.student { background: var(--amber-pale); color: var(--amber); }
+  .t-text { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+  .voice-insight {
+    margin: 0 1.25rem 1rem;
+    padding: .75rem 1rem;
+    background: var(--amber-pale);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+  }
+  .voice-insight .vi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--amber); margin-bottom: 4px; }
+  .voice-insight .vi-text { font-size: 12px; color: var(--text-mid); line-height: 1.6; }
+
+  /* ─── TOPIC MAP ─── */
+  .topic-map {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 1.5rem;
+  }
+  .topic-row { display: flex; align-items: center; gap: 10px; margin-bottom: .65rem; }
+  .topic-row:last-child { margin-bottom: 0; }
+  .topic-name { font-size: 13px; color: var(--text-dark); width: 180px; flex-shrink: 0; }
+  .topic-bar-wrap { flex: 1; height: 8px; background: var(--sage); border-radius: 4px; overflow: hidden; }
+  .topic-bar { height: 8px; border-radius: 4px; transition: width 1s ease; }
+  .bar-strong { background: var(--forest-light); }
+  .bar-ok { background: var(--amber); }
+  .bar-weak { background: var(--red-soft); }
+  .topic-pct { font-size: 12px; font-weight: 500; width: 36px; text-align: right; flex-shrink: 0; }
+  .pct-strong { color: var(--forest-light); }
+  .pct-ok { color: var(--amber); }
+  .pct-weak { color: var(--red-soft); }
+
+  /* ─── PARENT ACTIONS ─── */
+  .action-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-bottom: 1.5rem; }
+  .action-btn {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all .15s;
+    box-shadow: var(--shadow-card);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .action-btn:hover { border-color: var(--forest-light); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .action-icon { font-size: 20px; margin-bottom: .5rem; }
+  .action-title { font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; }
+  .action-desc { font-size: 11px; color: var(--text-soft); margin-top: 2px; display: block; }
+
+  /* ─── UPCOMING ─── */
+  .upcoming-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+  .upcoming-item { padding: .8rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .upcoming-item:last-child { border-bottom: none; }
+  .upcoming-date { width: 42px; height: 42px; border-radius: 8px; background: var(--sage); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+  .upcoming-date .ud-day { font-size: 18px; font-weight: 700; color: var(--forest); line-height: 1; font-family: 'DM Serif Display', serif; }
+  .upcoming-date .ud-mon { font-size: 10px; color: var(--forest-mid); text-transform: uppercase; letter-spacing: .5px; }
+  .upcoming-body strong { font-size: 13px; font-weight: 500; display: block; }
+  .upcoming-body span { font-size: 12px; color: var(--text-soft); }
+  .upcoming-tag { margin-left: auto; font-size: 11px; padding: 3px 10px; border-radius: 8px; flex-shrink: 0; font-weight: 500; }
+  .tag-test { background: #fdecea; color: var(--red-soft); }
+  .tag-revision { background: var(--amber-pale); color: var(--amber); }
+  .tag-new { background: var(--sage); color: var(--forest-mid); }
+
+  @media (max-width: 768px) {
+    .main { padding: 1rem; }
+    .health-row { grid-template-columns: 1fr; }
+    .alerts-grid { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .action-row { grid-template-columns: 1fr 1fr; }
+    .topbar { padding: 0 1rem; }
+    .child-bar { padding: .75rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">vidya<span>ai</span></div>
+  <div class="topbar-right">
+    <span>Priya Sharma (Parent)</span>
+    <button class="wa-btn">📱 Weekly report on WhatsApp</button>
+  </div>
+</div>
+
+<!-- CHILD BAR -->
+<div class="child-bar">
+  <div class="child-info">
+    <div class="child-avatar">R</div>
+    <div>
+      <div class="child-name">Riya Sharma</div>
+      <div class="child-meta">Grade 5 · CBSE · Chapter 4 active — Fractions</div>
+    </div>
+  </div>
+  <div class="streak-pill">🔥 14-day streak</div>
+</div>
+
+<div class="main">
+
+  <!-- HEALTH SCORE + STATS -->
+  <div class="section-label">Learning health — this week</div>
+  <div class="health-row">
+    <div class="health-card">
+      <div class="health-title">Exam Readiness Score</div>
+      <div class="score-ring-wrap">
+        <canvas id="ringChart" width="120" height="120"></canvas>
+        <div class="score-center">
+          <span class="score-num">72</span>
+          <span class="score-denom">/100</span>
+        </div>
+      </div>
+      <div class="health-label">Grade 5 Maths · Chapter 1–4</div>
+      <div class="health-verdict warn">Needs attention in 2 topics</div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val good">4.2 hrs</div>
+        <div class="stat-label">Practice time this week</div>
+        <div class="stat-delta delta-up">↑ 38 min more than last week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val warn">58%</div>
+        <div class="stat-label">Accuracy — fractions</div>
+        <div class="stat-delta delta-dn">↓ Weakest topic this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val good">89%</div>
+        <div class="stat-label">Accuracy — multiplication</div>
+        <div class="stat-delta delta-up">↑ Mastered — due for revision in 6 days</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">3</div>
+        <div class="stat-label">Voice AI sessions this week</div>
+        <div class="stat-delta" style="color:var(--text-soft)">Avg 12 min per session</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERT CARDS -->
+  <div class="section-label">Topics that need your attention</div>
+  <div class="alerts-grid">
+    <div class="alert-card">
+      <div class="alert-top">
+        <div class="alert-type red">⚠ Recurring gap</div>
+        <div class="alert-topic">Equivalent Fractions</div>
+        <div class="alert-chapter">Chapter 4 · 6 errors in last 3 sessions</div>
+      </div>
+      <div class="alert-bottom">
+        <span class="alert-stat">Accuracy <strong>42%</strong></span>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill fill-red" style="width:42%"></div></div>
+      </div>
+    </div>
+    <div class="alert-card">
+      <div class="alert-top">
+        <div class="alert-type amber">⚡ Shaky grasp</div>
+        <div class="alert-topic">Improper Fractions</div>
+        <div class="alert-chapter">Chapter 4 · Correct but slow</div>
+      </div>
+      <div class="alert-bottom">
+        <span class="alert-stat">Accuracy <strong>71%</strong></span>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill fill-amber" style="width:71%"></div></div>
+      </div>
+    </div>
+    <div class="alert-card">
+      <div class="alert-top">
+        <div class="alert-type green">✓ Strong</div>
+        <div class="alert-topic">Long Multiplication</div>
+        <div class="alert-chapter">Chapter 2 · Mastered last week</div>
+      </div>
+      <div class="alert-bottom">
+        <span class="alert-stat">Accuracy <strong>91%</strong></span>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:91%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS + ACTIVITY -->
+  <div class="two-col">
+    <div>
+      <div class="section-label">Score trend — last 8 sessions</div>
+      <div class="chart-card">
+        <div class="chart-title">Practice accuracy <span>Rolling average</span></div>
+        <div class="chart-wrap">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="section-label">Today's activity</div>
+      <div class="feed-card">
+        <div class="feed-header">
+          <h4>Activity log</h4>
+          <span class="today-tag">Thursday, 19 Mar</span>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon voice">🎙️</div>
+          <div class="feed-body">
+            <strong>Voice AI session — Fractions</strong>
+            <span>Asked about equivalent fractions twice. See insight below.</span>
+          </div>
+          <div class="feed-time">4:12 pm</div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon test">📝</div>
+          <div class="feed-body">
+            <strong>Chapter 4 mini test</strong>
+            <span>Score 14/20 — Fractions dragged score down</span>
+          </div>
+          <div class="feed-time">3:30 pm</div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon practice">⚡</div>
+          <div class="feed-body">
+            <strong>Adaptive practice — 22 questions</strong>
+            <span>Multiplication: 9/9 · Fractions: 7/13</span>
+          </div>
+          <div class="feed-time">3:00 pm</div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-icon badge">🏅</div>
+          <div class="feed-body">
+            <strong>Badge earned — Multiplication Master</strong>
+            <span>3rd chapter badge this month</span>
+          </div>
+          <div class="feed-time">3:02 pm</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOICE AI INSIGHT -->
+  <div class="section-label">Today's voice AI session — what Riya asked</div>
+  <div class="voice-card">
+    <div class="voice-header">
+      <h4>🎙️ Session summary · Chapter 4: Fractions · 12 min</h4>
+      <span>Today 4:12 pm</span>
+    </div>
+    <div class="voice-transcript">
+      <div class="transcript-row">
+        <span class="t-label ai">AI</span>
+        <span class="t-text">Riya, let's try: which is bigger — 2/4 or 3/6? Take your time.</span>
+      </div>
+      <div class="transcript-row">
+        <span class="t-label student">Riya</span>
+        <span class="t-text">"2/4 is bigger because 4 is smaller than 6, so the pieces are bigger."</span>
+      </div>
+      <div class="transcript-row">
+        <span class="t-label ai">AI</span>
+        <span class="t-text">Great thinking about piece size! Now, what if I told you they're actually equal? Can you think why?</span>
+      </div>
+      <div class="transcript-row">
+        <span class="t-label student">Riya</span>
+        <span class="t-text">"I don't understand... how can different numbers be the same?"</span>
+      </div>
+    </div>
+    <div class="voice-insight">
+      <div class="vi-label">🔍 AI insight for you</div>
+      <div class="vi-text">Riya understands that smaller denominators mean larger pieces — this is correct. But she hasn't yet grasped that two fractions can represent the same amount (equivalent fractions). <strong>Try this at home:</strong> take a roti or chapati, cut one half into 2 pieces and another into 3 pieces — ask her if you ate one piece from each, did you eat the same amount?</div>
+    </div>
+  </div>
+
+  <!-- TOPIC MASTERY MAP -->
+  <div class="section-label">Chapter mastery map — Grade 5 Maths</div>
+  <div class="topic-map">
+    <div class="chart-title" style="margin-bottom:.85rem;">All topics <span>Updated after every session</span></div>
+    <div class="topic-row"><div class="topic-name">Numbers up to 10 lakh</div><div class="topic-bar-wrap"><div class="topic-bar bar-strong" style="width:94%"></div></div><div class="topic-pct pct-strong">94%</div></div>
+    <div class="topic-row"><div class="topic-name">Addition & Subtraction</div><div class="topic-bar-wrap"><div class="topic-bar bar-strong" style="width:88%"></div></div><div class="topic-pct pct-strong">88%</div></div>
+    <div class="topic-row"><div class="topic-name">Multiplication</div><div class="topic-bar-wrap"><div class="topic-bar bar-strong" style="width:91%"></div></div><div class="topic-pct pct-strong">91%</div></div>
+    <div class="topic-row"><div class="topic-name">Division</div><div class="topic-bar-wrap"><div class="topic-bar bar-ok" style="width:74%"></div></div><div class="topic-pct pct-ok">74%</div></div>
+    <div class="topic-row"><div class="topic-name">Fractions — basics</div><div class="topic-bar-wrap"><div class="topic-bar bar-ok" style="width:68%"></div></div><div class="topic-pct pct-ok">68%</div></div>
+    <div class="topic-row"><div class="topic-name">Equivalent Fractions</div><div class="topic-bar-wrap"><div class="topic-bar bar-weak" style="width:42%"></div></div><div class="topic-pct pct-weak">42%</div></div>
+    <div class="topic-row"><div class="topic-name">Decimals (not started)</div><div class="topic-bar-wrap"><div class="topic-bar bar-ok" style="width:0%"></div></div><div class="topic-pct" style="color:var(--text-soft)">—</div></div>
+  </div>
+
+  <!-- PARENT ACTIONS -->
+  <div class="section-label">What you can do</div>
+  <div class="action-row">
+    <button class="action-btn">
+      <div class="action-icon">🗓️</div>
+      <span class="action-title">Set a study reminder</span>
+      <span class="action-desc">Riya studies best at 3–4 pm. Set a daily nudge.</span>
+    </button>
+    <button class="action-btn">
+      <div class="action-icon">📊</div>
+      <span class="action-title">Download report card</span>
+      <span class="action-desc">Full PDF with all topics and trend analysis.</span>
+    </button>
+    <button class="action-btn">
+      <div class="action-icon">🎯</div>
+      <span class="action-title">Request focus session</span>
+      <span class="action-desc">Ask the AI to run a dedicated fractions session tonight.</span>
+    </button>
+  </div>
+
+  <!-- UPCOMING -->
+  <div class="section-label">Coming up</div>
+  <div class="upcoming-card">
+    <div class="upcoming-item">
+      <div class="upcoming-date"><div class="ud-day">21</div><div class="ud-mon">Mar</div></div>
+      <div class="upcoming-body">
+        <strong>Chapter 4 revision due</strong>
+        <span>Fractions — engine has scheduled spaced revision</span>
+      </div>
+      <span class="upcoming-tag tag-revision">Revision</span>
+    </div>
+    <div class="upcoming-item">
+      <div class="upcoming-date"><div class="ud-day">25</div><div class="ud-mon">Mar</div></div>
+      <div class="upcoming-body">
+        <strong>Chapter 4 full test</strong>
+        <span>Fractions — 20 questions, 30 minutes</span>
+      </div>
+      <span class="upcoming-tag tag-test">Test</span>
+    </div>
+    <div class="upcoming-item">
+      <div class="upcoming-date"><div class="ud-day">28</div><div class="ud-mon">Mar</div></div>
+      <div class="upcoming-body">
+        <strong>Chapter 5 begins — Decimals</strong>
+        <span>Prerequisite check: fractions must be above 75%</span>
+      </div>
+      <span class="upcoming-tag tag-new">New chapter</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Ring chart
+const ringCtx = document.getElementById('ringChart').getContext('2d');
+new Chart(ringCtx, {
+  type: 'doughnut',
+  data: {
+    datasets: [{
+      data: [72, 28],
+      backgroundColor: ['#7ec89a', 'rgba(255,255,255,0.1)'],
+      borderWidth: 0,
+      borderRadius: 6
+    }]
+  },
+  options: {
+    cutout: '78%',
+    responsive: false,
+    plugins: { legend: { display: false }, tooltip: { enabled: false } }
+  }
+});
+
+// Trend chart
+const trendCtx = document.getElementById('trendChart').getContext('2d');
+new Chart(trendCtx, {
+  type: 'line',
+  data: {
+    labels: ['Mar 5','Mar 7','Mar 10','Mar 12','Mar 14','Mar 16','Mar 18','Today'],
+    datasets: [{
+      label: 'Overall accuracy',
+      data: [61, 65, 63, 68, 72, 70, 74, 72],
+      borderColor: '#3d7a58',
+      backgroundColor: 'rgba(61,122,88,0.08)',
+      borderWidth: 2,
+      pointBackgroundColor: '#3d7a58',
+      pointRadius: 4,
+      pointHoverRadius: 6,
+      tension: 0.4,
+      fill: true
+    },{
+      label: 'Fractions only',
+      data: [null, null, null, null, 55, 52, 60, 58],
+      borderColor: '#c4832a',
+      backgroundColor: 'transparent',
+      borderWidth: 1.5,
+      borderDash: [4, 3],
+      pointBackgroundColor: '#c4832a',
+      pointRadius: 3,
+      tension: 0.4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1a3a2a',
+        titleFont: { family: 'DM Sans', size: 12 },
+        bodyFont: { family: 'DM Sans', size: 12 },
+        padding: 10,
+        cornerRadius: 8
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { family: 'DM Sans', size: 11 }, color: '#8a8a82' },
+        border: { display: false }
+      },
+      y: {
+        min: 40, max: 100,
+        grid: { color: 'rgba(0,0,0,0.04)' },
+        ticks: {
+          font: { family: 'DM Sans', size: 11 },
+          color: '#8a8a82',
+          callback: v => v + '%'
+        },
+        border: { display: false }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

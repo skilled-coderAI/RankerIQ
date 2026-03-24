@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalam — Website Wireframe</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Courier New', monospace; background: #f0ede8; color: #1a1a1a; }
+
+/* ── Wireframe globals ── */
+.wf-section { border: 2px solid #1a1a1a; margin: 0; position: relative; }
+.wf-label { position: absolute; top: 8px; right: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; }
+.wf-box { border: 1.5px solid #1a1a1a; background: #fff; position: relative; }
+.wf-box.gray { background: #e2ddd8; }
+.wf-box.dark { background: #1a1a1a; }
+.wf-box.mid { background: #c8c4be; }
+.wf-img { border: 1.5px solid #1a1a1a; background: #ddd; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.wf-img::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 6px, rgba(0,0,0,0.06) 6px, rgba(0,0,0,0.06) 7px); }
+.wf-img span { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; position: relative; z-index: 1; background: #ddd; padding: 3px 8px; }
+.wf-text { font-size: 12px; color: #555; }
+.wf-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #1a1a1a; }
+.wf-h1 { font-size: 20px; font-weight: 700; line-height: 1.2; color: #1a1a1a; }
+.wf-h2 { font-size: 15px; font-weight: 700; line-height: 1.3; color: #1a1a1a; }
+.wf-btn { border: 2px solid #1a1a1a; background: #1a1a1a; color: #fff; padding: 8px 18px; font-family: 'Courier New', monospace; font-size: 12px; font-weight: 700; cursor: default; display: inline-block; }
+.wf-btn.outline { background: transparent; color: #1a1a1a; }
+.wf-pill { border: 1.5px solid #1a1a1a; background: #e2ddd8; padding: 3px 12px; font-size: 11px; display: inline-block; }
+.wf-line { height: 2px; background: #1a1a1a; }
+.wf-line.light { height: 1px; background: #bbb; }
+.wf-line.dashed { border-top: 1.5px dashed #999; height: 0; }
+.wf-bar { height: 10px; border: 1.5px solid #1a1a1a; background: #1a1a1a; }
+.wf-bar.empty { background: #ddd; }
+.wf-bar.half { background: #1a1a1a; width: 55%; }
+.wf-redline { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #1a1a1a; }
+.annotation { position: absolute; right: -180px; display: flex; align-items: flex-start; gap: 6px; width: 170px; }
+.ann-line { width: 40px; height: 1px; background: #aaa; margin-top: 6px; flex-shrink: 0; }
+.ann-text { font-size: 10px; color: #888; line-height: 1.4; }
+.page-label { background: #1a1a1a; color: #fff; font-size: 11px; font-weight: 700; padding: 6px 16px; text-transform: uppercase; letter-spacing: 2px; display: inline-block; margin: 24px 0 0 24px; }
+.section-note { font-size: 10px; color: #aaa; margin: 6px 0 0 24px; font-style: italic; }
+
+/* ── Layout helpers ── */
+.flex { display: flex; }
+.col { flex-direction: column; }
+.gap4 { gap: 4px; }
+.gap8 { gap: 8px; }
+.gap12 { gap: 12px; }
+.gap16 { gap: 16px; }
+.gap24 { gap: 24px; }
+.pad8 { padding: 8px; }
+.pad12 { padding: 12px; }
+.pad16 { padding: 16px; }
+.pad24 { padding: 24px; }
+.pad32 { padding: 32px; }
+.pad40 { padding: 40px; }
+.w50 { width: 50%; }
+.w33 { width: 33.333%; }
+.w66 { width: 66.666%; }
+.w25 { width: 25%; }
+.w75 { width: 75%; }
+.center { text-align: center; justify-content: center; align-items: center; }
+.between { justify-content: space-between; }
+.stretch { align-items: stretch; }
+.mb4 { margin-bottom: 4px; }
+.mb8 { margin-bottom: 8px; }
+.mb12 { margin-bottom: 12px; }
+.mb16 { margin-bottom: 16px; }
+.mb24 { margin-bottom: 24px; }
+.mb32 { margin-bottom: 32px; }
+.flex1 { flex: 1; }
+
+/* ── Page chrome ── */
+.page-wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+.page-title { padding: 40px 0 8px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: #888; }
+.page-subtitle { font-size: 12px; color: #aaa; margin-bottom: 32px; }
+
+/* Redline measurement arrows */
+.measure { position: relative; }
+.measure::after { content: attr(data-w); position: absolute; bottom: -16px; left: 0; right: 0; text-align: center; font-size: 9px; color: #aaa; border-top: 1px dashed #ccc; }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <div class="page-title">Kalam.ai — Website Wireframe</div>
+  <div class="page-subtitle">All sections · Desktop layout · v1.0</div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 1: NAVIGATION
+  ══════════════════════════════════════ -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">01 — Navigation</div>
+  </div>
+  <div class="wf-section" style="padding: 0;">
+    <div class="flex between" style="align-items:center; padding: 14px 32px; background:#1a1a1a;">
+      <!-- Logo -->
+      <div class="flex gap8" style="align-items:center;">
+        <div class="wf-box" style="width:80px; height:28px; background:#333; border-color:#555; display:flex; align-items:center; justify-content:center;">
+          <span style="color:#fff; font-size:13px; font-weight:700;">KALAM.</span>
+        </div>
+      </div>
+      <!-- Nav links -->
+      <div class="flex gap24" style="align-items:center;">
+        <div style="font-size:12px; color:#aaa;">How it works</div>
+        <div style="font-size:12px; color:#aaa;">For parents</div>
+        <div style="font-size:12px; color:#aaa;">Grades 5–12</div>
+        <div style="font-size:12px; color:#aaa;">Pricing</div>
+        <div class="wf-btn" style="font-size:11px; padding:6px 14px;">Start free trial →</div>
+      </div>
+    </div>
+    <div class="wf-label" style="color:#666; top:14px;">Sticky · z-index 100 · dark bg</div>
+  </div>
+
+  <div style="height:24px;"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 2: HERO
+  ══════════════════════════════════════ -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">02 — Hero Section</div>
+  </div>
+  <div class="wf-section" style="background:#1a1a1a; padding:64px 48px 48px; position:relative; min-height:580px;">
+    <div class="wf-label" style="color:#555;">Full viewport height · Dark background · Grain overlay</div>
+
+    <!-- Eyebrow -->
+    <div class="flex center mb16" style="flex-direction:column;">
+      <div class="wf-pill" style="background:#2a2a2a; border-color:#444; color:#aaa; margin-bottom:24px; font-size:11px;">
+        ● Voice-first AI tutoring · Grade 5 to JEE/NEET
+      </div>
+
+      <!-- H1 -->
+      <div style="text-align:center; margin-bottom:20px; max-width:640px; margin-left:auto; margin-right:auto;">
+        <div style="color:#fff; font-size:28px; font-weight:700; line-height:1.2; font-family:'Courier New',monospace;">
+          Your child learns by<br>
+          <span style="border-bottom:3px solid #e07b1a;">talking</span>, not clicking
+        </div>
+      </div>
+
+      <!-- Subheadline -->
+      <div style="text-align:center; max-width:500px; margin:0 auto 28px; color:#666; font-size:13px; line-height:1.7;">
+        Kalam is an AI tutor your child speaks to — in Hindi, English, or Hinglish.
+        It listens, understands, and teaches back.
+      </div>
+
+      <!-- CTA buttons -->
+      <div class="flex gap12 center mb32">
+        <div class="wf-btn">Start free trial →</div>
+        <div class="wf-btn outline" style="border-color:#555; color:#aaa;">▶ Watch 2-min demo</div>
+      </div>
+    </div>
+
+    <!-- Voice demo widget -->
+    <div style="max-width:640px; margin:0 auto; border:1.5px solid #333; border-radius:4px; padding:20px; background:#111; position:relative;">
+      <div class="flex between mb12">
+        <div style="font-size:11px; color:#666; text-transform:uppercase; letter-spacing:1px;">● Live session</div>
+        <div style="font-size:11px; color:#555;">Riya · Grade 5 · Fractions</div>
+      </div>
+      <!-- Question text -->
+      <div style="font-size:14px; color:#888; font-style:italic; margin-bottom:16px; line-height:1.5;">
+        "Agar ek pizza ke 4 tukde hain aur maine 2 khaaye, toh kitna bachha?"
+      </div>
+      <!-- Waveform placeholder -->
+      <div class="wf-img" style="height:48px; margin-bottom:16px; background:#1a1a1a; border-color:#333;">
+        <span style="background:#1a1a1a; color:#555;">Animated waveform bars</span>
+      </div>
+      <!-- AI response -->
+      <div style="border:1px solid #2a4a3a; background:#0d2420; border-radius:4px; padding:10px 14px; font-size:12px; color:#5a9a78; line-height:1.6;">
+        <strong style="color:#7ec89a;">Kalam:</strong> "Wah, Riya! Half bachha — matlab 2/4. Ab batao — kya yeh 1/2 ke barabar hoga?" 🤔
+      </div>
+      <div style="position:absolute; top:8px; right:8px; font-size:9px; color:#444; text-transform:uppercase; letter-spacing:1px;">Hinglish demo widget</div>
+    </div>
+
+    <!-- Trust strip -->
+    <div style="border-top:1px solid #2a2a2a; margin-top:40px; padding-top:24px; display:flex; gap:0; max-width:700px; margin-left:auto; margin-right:auto;">
+      <div style="flex:1; text-align:center;">
+        <div style="font-size:18px; font-weight:700; color:#fff; font-family:'Courier New',monospace;">12,400+</div>
+        <div style="font-size:10px; color:#555; margin-top:3px; text-transform:uppercase; letter-spacing:.5px;">Active students</div>
+      </div>
+      <div style="width:1px; background:#2a2a2a;"></div>
+      <div style="flex:1; text-align:center;">
+        <div style="font-size:18px; font-weight:700; color:#fff; font-family:'Courier New',monospace;">4.8 ★</div>
+        <div style="font-size:10px; color:#555; margin-top:3px; text-transform:uppercase; letter-spacing:.5px;">Parent rating</div>
+      </div>
+      <div style="width:1px; background:#2a2a2a;"></div>
+      <div style="flex:1; text-align:center;">
+        <div style="font-size:18px; font-weight:700; color:#fff; font-family:'Courier New',monospace;">3 langs</div>
+        <div style="font-size:10px; color:#555; margin-top:3px; text-transform:uppercase; letter-spacing:.5px;">Hindi · English · Hinglish</div>
+      </div>
+      <div style="width:1px; background:#2a2a2a;"></div>
+      <div style="flex:1; text-align:center;">
+        <div style="font-size:18px; font-weight:700; color:#fff; font-family:'Courier New',monospace;">CBSE · ICSE</div>
+        <div style="font-size:10px; color:#555; margin-top:3px; text-transform:uppercase; letter-spacing:.5px;">All major boards</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:24px;"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 3: GRADE JOURNEY
+  ══════════════════════════════════════ -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">03 — Grade Journey Track</div>
+  </div>
+  <div class="wf-section" style="padding:40px 48px; background:#fff;">
+    <div class="wf-label">White background · Full width</div>
+    <!-- Header -->
+    <div style="text-align:center; margin-bottom:32px;">
+      <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:#e07b1a; margin-bottom:8px;">Your child's full journey</div>
+      <div style="font-size:20px; font-weight:700; margin-bottom:8px;">From Grade 5 to <span style="border-bottom:2px solid #e07b1a; font-style:italic;">their dream exam</span></div>
+      <div style="font-size:12px; color:#888; max-width:480px; margin:0 auto; line-height:1.6;">Kalam grows with your child. Same AI tutor, same adaptive engine — all the way from fractions to physical chemistry.</div>
+    </div>
+    <!-- Journey track -->
+    <div style="position:relative; padding:20px 0;">
+      <!-- Line -->
+      <div style="position:absolute; top:50%; left:0; right:0; height:2px; background:linear-gradient(to right, #52b788, #e07b1a, #e53e3e); z-index:0;"></div>
+      <!-- Stops -->
+      <div class="flex between" style="position:relative; z-index:1;">
+        <!-- Grade 5 (active) -->
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="width:44px; height:44px; border-radius:50%; background:#e07b1a; border:3px solid #fff; box-shadow:0 0 0 3px #e07b1a; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; color:#fff; font-family:'Courier New',monospace;">5</div>
+          <div style="font-size:10px; font-weight:700; margin-top:6px; text-transform:uppercase;">Grade 5</div>
+          <div style="font-size:9px; color:#e07b1a; margin-top:2px;">You are here</div>
+        </div>
+        <!-- 6,7,8,9 -->
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="width:32px; height:32px; border-radius:50%; background:#e2ddd8; border:2px solid #1a1a1a; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; font-family:'Courier New',monospace;">6</div>
+          <div style="font-size:9px; margin-top:6px; color:#888;">Grade 6</div>
+          <div style="font-size:9px; color:#aaa;">2025</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="width:32px; height:32px; border-radius:50%; background:#e2ddd8; border:2px solid #1a1a1a; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; font-family:'Courier New',monospace;">7</div>
+          <div style="font-size:9px; margin-top:6px; color:#888;">Grade 7</div>
+          <div style="font-size:9px; color:#aaa;">Roadmap</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="width:32px; height:32px; border-radius:50%; background:#e2ddd8; border:2px solid #1a1a1a; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; font-family:'Courier New',monospace;">8</div>
+          <div style="font-size:9px; margin-top:6px; color:#888;">Grade 8</div>
+          <div style="font-size:9px; color:#aaa;">Roadmap</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="width:32px; height:32px; border-radius:50%; background:#e2ddd8; border:2px solid #1a1a1a; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; font-family:'Courier New',monospace;">9</div>
+          <div style="font-size:9px; margin-top:6px; color:#888;">Grade 9</div>
+          <div style="font-size:9px; color:#aaa;">Roadmap</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="width:32px; height:32px; border-radius:50%; background:#e2ddd8; border:2px solid #1a1a1a; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; font-family:'Courier New',monospace;">10</div>
+          <div style="font-size:9px; margin-top:6px; color:#888;">Grade 10</div>
+          <div style="font-size:9px; color:#aaa;">Boards</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="width:32px; height:32px; border-radius:50%; background:#e2ddd8; border:2px solid #1a1a1a; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; font-family:'Courier New',monospace;">11</div>
+          <div style="font-size:9px; margin-top:6px; color:#888;">Grade 11</div>
+          <div style="font-size:9px; color:#aaa;">PCM/PCB</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="width:32px; height:32px; border-radius:50%; background:#e2ddd8; border:2px solid #1a1a1a; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; font-family:'Courier New',monospace;">12</div>
+          <div style="font-size:9px; margin-top:6px; color:#888;">Grade 12</div>
+          <div style="font-size:9px; color:#aaa;">Entrance</div>
+        </div>
+        <!-- JEE -->
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="width:38px; height:38px; border-radius:50%; background:#c0392b; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:10px; color:#fff; font-family:'Courier New',monospace;">JEE</div>
+          <div style="font-size:9px; font-weight:700; margin-top:6px;">IIT-JEE</div>
+          <div style="font-size:9px; color:#aaa;">Engineering</div>
+        </div>
+        <!-- NEET -->
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="width:38px; height:38px; border-radius:50%; background:#c0392b; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:10px; color:#fff; font-family:'Courier New',monospace;">NEET</div>
+          <div style="font-size:9px; font-weight:700; margin-top:6px;">NEET</div>
+          <div style="font-size:9px; color:#aaa;">Medical</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:24px;"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 4: HOW IT WORKS
+  ══════════════════════════════════════ -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">04 — How It Works</div>
+  </div>
+  <div class="wf-section" style="padding:48px; background:#f8f5f0;">
+    <div class="wf-label">Cream background · 3-column grid</div>
+    <div style="text-align:center; margin-bottom:36px;">
+      <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:#e07b1a; margin-bottom:8px;">How it works</div>
+      <div style="font-size:20px; font-weight:700;">Three things that replace a Rs 5,000/month tutor</div>
+    </div>
+    <!-- 3 cols -->
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px; border:1.5px solid #1a1a1a;">
+      <!-- Card 1 -->
+      <div class="wf-box" style="padding:28px 24px;">
+        <div style="font-size:48px; font-weight:700; color:#e2ddd8; line-height:1; margin-bottom:16px; font-family:'Courier New',monospace;">01</div>
+        <div class="wf-img" style="width:48px; height:48px; margin-bottom:16px; border-radius:0; background:#fef3e2;">
+          <span style="font-size:20px; background:transparent;">🎙️</span>
+        </div>
+        <div style="font-size:14px; font-weight:700; margin-bottom:8px;">Your child speaks to Kalam</div>
+        <div style="font-size:12px; color:#888; line-height:1.7;">No typing, no swiping. Riya opens the app and starts talking in whatever language she chooses.</div>
+      </div>
+      <!-- Card 2 -->
+      <div class="wf-box" style="padding:28px 24px; border-left:1.5px solid #1a1a1a; border-right:1.5px solid #1a1a1a;">
+        <div style="font-size:48px; font-weight:700; color:#e2ddd8; line-height:1; margin-bottom:16px; font-family:'Courier New',monospace;">02</div>
+        <div class="wf-img" style="width:48px; height:48px; margin-bottom:16px; border-radius:0; background:#e8f5ee;">
+          <span style="font-size:20px; background:transparent;">🧠</span>
+        </div>
+        <div style="font-size:14px; font-weight:700; margin-bottom:8px;">Kalam finds what's missing</div>
+        <div style="font-size:12px; color:#888; line-height:1.7;">Every session builds a detailed map of what the child truly understands vs what they're guessing.</div>
+      </div>
+      <!-- Card 3 -->
+      <div class="wf-box" style="padding:28px 24px;">
+        <div style="font-size:48px; font-weight:700; color:#e2ddd8; line-height:1; margin-bottom:16px; font-family:'Courier New',monospace;">03</div>
+        <div class="wf-img" style="width:48px; height:48px; margin-bottom:16px; border-radius:0; background:#e8eef8;">
+          <span style="font-size:20px; background:transparent;">📱</span>
+        </div>
+        <div style="font-size:14px; font-weight:700; margin-bottom:8px;">You see proof of progress</div>
+        <div style="font-size:12px; color:#888; line-height:1.7;">Parent dashboard + weekly WhatsApp report. Clear, jargon-free, updated after every session.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:24px;"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 5: VOICE AI FEATURE
+  ══════════════════════════════════════ -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">05 — Voice AI Feature Section</div>
+  </div>
+  <div class="wf-section" style="padding:56px 48px; background:#0a1628; position:relative;">
+    <div class="wf-label" style="color:#333;">Dark navy · 2-column layout · Phone mockup right</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;">
+
+      <!-- Left: copy -->
+      <div>
+        <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:#e07b1a; margin-bottom:12px;">Voice AI — our core technology</div>
+        <div style="font-size:22px; font-weight:700; color:#fff; line-height:1.2; margin-bottom:16px;">The only tutor that <span style="font-style:italic; color:#f5a84a;">listens</span></div>
+        <div style="font-size:13px; color:#555; line-height:1.7; margin-bottom:24px;">Every other edtech gives content to consume. Kalam asks your child to think out loud.</div>
+        <!-- Feature list -->
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px; height:20px; border-radius:50%; border:1.5px solid #2d6a4f; background:#0d2420; display:flex; align-items:center; justify-content:center; font-size:10px; color:#52b788; flex-shrink:0; margin-top:1px;">✓</div>
+            <div style="font-size:12px; color:#555; line-height:1.5;"><span style="color:#888; font-weight:700;">Speaks Hindi, English & Hinglish</span> — naturally, as your child actually talks.</div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px; height:20px; border-radius:50%; border:1.5px solid #2d6a4f; background:#0d2420; display:flex; align-items:center; justify-content:center; font-size:10px; color:#52b788; flex-shrink:0; margin-top:1px;">✓</div>
+            <div style="font-size:12px; color:#555; line-height:1.5;"><span style="color:#888; font-weight:700;">Never gives the answer directly</span> — asks guiding questions instead.</div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px; height:20px; border-radius:50%; border:1.5px solid #2d6a4f; background:#0d2420; display:flex; align-items:center; justify-content:center; font-size:10px; color:#52b788; flex-shrink:0; margin-top:1px;">✓</div>
+            <div style="font-size:12px; color:#555; line-height:1.5;"><span style="color:#888; font-weight:700;">Detects confusion in real-time</span> — adjusts approach mid-conversation.</div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px; height:20px; border-radius:50%; border:1.5px solid #2d6a4f; background:#0d2420; display:flex; align-items:center; justify-content:center; font-size:10px; color:#52b788; flex-shrink:0; margin-top:1px;">✓</div>
+            <div style="font-size:12px; color:#555; line-height:1.5;"><span style="color:#888; font-weight:700;">Every session feeds the parent dashboard</span> — instant summary after each conversation.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: phone mockup -->
+      <div style="display:flex; justify-content:center; position:relative;">
+        <!-- Float card left -->
+        <div style="position:absolute; left:-20px; top:60px; width:120px; background:#fff; border:1.5px solid #1a1a1a; padding:8px 10px; z-index:10;">
+          <div style="font-size:9px; color:#aaa; margin-bottom:2px;">Today's score</div>
+          <div style="font-size:18px; font-weight:700; font-family:'Courier New',monospace;">74%</div>
+          <div style="font-size:9px; color:#2d6a4f; font-weight:700;">↑ up from 61%</div>
+        </div>
+        <!-- Phone frame -->
+        <div style="width:220px; background:#111827; border-radius:32px; padding:10px; border:2px solid #333;">
+          <div style="width:60px; height:18px; background:#111827; border-radius:0 0 12px 12px; margin:0 auto 6px;"></div>
+          <div style="background:#0a1628; border-radius:24px; padding:16px; min-height:360px;">
+            <!-- Screen header -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <div style="font-size:12px; font-weight:700; color:#fff; font-family:'Courier New',monospace;">Kalam</div>
+              <div style="font-size:9px; padding:2px 8px; background:#2a1a08; color:#e07b1a; border:1px solid #4a3010;">Fractions</div>
+            </div>
+            <!-- Voice orb -->
+            <div style="display:flex; flex-direction:column; align-items:center; margin:20px 0;">
+              <div style="width:70px; height:70px; border-radius:50%; background:#1a2a1a; border:2px solid #2d6a4f; display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 0 0 8px rgba(45,106,79,0.1);">🎙️</div>
+              <div style="font-size:9px; color:#444; margin-top:8px; text-transform:uppercase; letter-spacing:1px;">Listening…</div>
+            </div>
+            <!-- Chat bubbles -->
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="background:rgba(255,255,255,0.06); border-radius:10px 10px 10px 3px; padding:8px 10px; font-size:10px; color:#666; line-height:1.5; max-width:90%;">
+                <div style="font-size:8px; color:#e07b1a; font-weight:700; margin-bottom:3px; text-transform:uppercase; letter-spacing:.5px;">Kalam</div>
+                2/4 aur 3/6 mein se kaun bada hai?
+              </div>
+              <div style="background:rgba(224,123,26,0.15); border-radius:10px 10px 3px 10px; padding:8px 10px; font-size:10px; color:#888; line-height:1.5; max-width:90%; margin-left:auto;">
+                <div style="font-size:8px; color:#f5a84a; font-weight:700; margin-bottom:3px; text-transform:uppercase; letter-spacing:.5px;">Riya</div>
+                2/4 bada hai kyunki... 4 chhota hai?
+              </div>
+              <div style="background:rgba(255,255,255,0.06); border-radius:10px 10px 10px 3px; padding:8px 10px; font-size:10px; color:#666; line-height:1.5; max-width:90%;">
+                <div style="font-size:8px; color:#e07b1a; font-weight:700; margin-bottom:3px; text-transform:uppercase; letter-spacing:.5px;">Kalam</div>
+                Ek roti ko 4 tukdon mein kaato...
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Float card right -->
+        <div style="position:absolute; right:-20px; bottom:80px; width:110px; background:#fff; border:1.5px solid #1a1a1a; padding:8px 10px; z-index:10;">
+          <div style="font-size:9px; color:#aaa; margin-bottom:2px;">14-day streak</div>
+          <div style="font-size:18px; font-weight:700; font-family:'Courier New',monospace;">🔥 14</div>
+          <div style="font-size:9px; color:#e07b1a; font-weight:700;">Personal best!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:24px;"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 6: ADAPTIVE ENGINE
+  ══════════════════════════════════════ -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">06 — Adaptive Practice Engine</div>
+  </div>
+  <div class="wf-section" style="padding:56px 48px; background:#fff;">
+    <div class="wf-label">White · 3 question cards + error callout</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:end; margin-bottom:32px;">
+      <div>
+        <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:#e07b1a; margin-bottom:8px;">Adaptive Practice Engine</div>
+        <div style="font-size:20px; font-weight:700; line-height:1.2;">Questions that <span style="font-style:italic; border-bottom:2px solid #e07b1a;">learn</span> your child</div>
+      </div>
+      <div style="font-size:12px; color:#888; line-height:1.7;">Not a static question bank. An engine that adjusts difficulty, switches formats, and tracks error patterns — until every concept actually sticks.</div>
+    </div>
+    <!-- 3 question cards -->
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px;">
+      <!-- Easy -->
+      <div class="wf-box" style="padding:16px; border-top:3px solid #52b788;">
+        <div style="font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#aaa; margin-bottom:8px; background:#f0f0ee; padding:2px 8px; display:inline-block;">Word problem</div>
+        <div style="font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:#2d6a4f; margin-bottom:10px;">Easy — building confidence</div>
+        <div style="font-size:12px; color:#555; line-height:1.6; margin-bottom:12px;">Priya has 6 apples. She gives away 2. What fraction is left?</div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="font-size:11px; padding:5px 8px; background:#e8f5ee; color:#2d6a4f; border:1px solid #c8e8d8;">✓ 4/6</div>
+          <div style="font-size:11px; padding:5px 8px; background:#f8f8f6; color:#888; border:1px solid #e2e2da;">2/6</div>
+          <div style="font-size:11px; padding:5px 8px; background:#f8f8f6; color:#888; border:1px solid #e2e2da;">4/2</div>
+        </div>
+      </div>
+      <!-- Medium -->
+      <div class="wf-box" style="padding:16px; border-top:3px solid #e07b1a;">
+        <div style="font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#aaa; margin-bottom:8px; background:#f0f0ee; padding:2px 8px; display:inline-block;">Identify the error</div>
+        <div style="font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:#c4832a; margin-bottom:10px;">Medium — deepening understanding</div>
+        <div style="font-size:12px; color:#555; line-height:1.6; margin-bottom:12px;">A student says 2/4 &gt; 3/6 because 4 &lt; 6. What is wrong?</div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="font-size:11px; padding:5px 8px; background:#f8f8f6; color:#888; border:1px solid #e2e2da;">Fractions not comparable</div>
+          <div style="font-size:11px; padding:5px 8px; background:#fdecea; color:#c0392b; border:1px solid #f0c8c4;">✗ Nothing, they are correct</div>
+          <div style="font-size:11px; padding:5px 8px; background:#e8f5ee; color:#2d6a4f; border:1px solid #c8e8d8;">✓ Ignored numerators</div>
+        </div>
+      </div>
+      <!-- Hard -->
+      <div class="wf-box" style="padding:16px; border-top:3px solid #e53e3e;">
+        <div style="font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#aaa; margin-bottom:8px; background:#f0f0ee; padding:2px 8px; display:inline-block;">Fill in blank</div>
+        <div style="font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:#e53e3e; margin-bottom:10px;">Hard — exam-level mastery</div>
+        <div style="font-size:12px; color:#555; line-height:1.6; margin-bottom:12px;">Fill in: 3/__ = 6/10. The missing denominator is ___</div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="font-size:11px; padding:5px 8px; background:#f8f8f6; color:#888; border:1px solid #e2e2da;">4</div>
+          <div style="font-size:11px; padding:5px 8px; background:#e8f5ee; color:#2d6a4f; border:1px solid #c8e8d8;">✓ 5</div>
+          <div style="font-size:11px; padding:5px 8px; background:#f8f8f6; color:#888; border:1px solid #e2e2da;">8</div>
+        </div>
+      </div>
+    </div>
+    <!-- Error insight callout -->
+    <div style="border:1.5px solid #1a1a1a; padding:16px 20px; background:#f8f5f0; display:flex; align-items:center; gap:20px;">
+      <div style="width:48px; height:48px; background:#fef3e2; border:1.5px solid #e07b1a; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">🔍</div>
+      <div style="flex:1;">
+        <div style="font-size:12px; font-weight:700; margin-bottom:4px;">Error pattern detected — Riya</div>
+        <div style="font-size:11px; color:#888; line-height:1.6;">Riya has answered 6 questions comparing fractions incorrectly in the last 3 sessions. She consistently ignores the numerator. Engine switched to "identify the error" format.</div>
+      </div>
+      <div style="border:1.5px solid #1a1a1a; padding:6px 12px; font-size:11px; color:#555; white-space:nowrap;">📱 Parent alerted</div>
+    </div>
+  </div>
+
+  <div style="height:24px;"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 7: PARENT DASHBOARD
+  ══════════════════════════════════════ -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">07 — Parent Dashboard Section</div>
+  </div>
+  <div class="wf-section" style="padding:56px 48px; background:#f4ede0;">
+    <div class="wf-label">Warm cream · 2-column · Dashboard preview right</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;">
+      <!-- Copy left -->
+      <div>
+        <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:#1a3a2a; margin-bottom:12px;">For parents</div>
+        <div style="font-size:20px; font-weight:700; line-height:1.2; margin-bottom:16px;">You always know <span style="font-style:italic; border-bottom:2px solid #1a3a2a;">exactly</span> where your child stands</div>
+        <div style="font-size:12px; color:#888; line-height:1.7; margin-bottom:24px;">Real-time map of your child's understanding — updated after every session. No jargon.</div>
+        <!-- Feature list -->
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; gap:8px; align-items:flex-start;">
+            <div style="width:18px; height:18px; border-radius:50%; border:1.5px solid #1a3a2a; background:#e8f5ee; display:flex; align-items:center; justify-content:center; font-size:9px; color:#1a3a2a; flex-shrink:0; margin-top:2px;">✓</div>
+            <div style="font-size:12px; color:#555; line-height:1.5;"><strong>Weekly WhatsApp report</strong> — every Sunday morning, summary lands in your phone.</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:flex-start;">
+            <div style="width:18px; height:18px; border-radius:50%; border:1.5px solid #1a3a2a; background:#e8f5ee; display:flex; align-items:center; justify-content:center; font-size:9px; color:#1a3a2a; flex-shrink:0; margin-top:2px;">✓</div>
+            <div style="font-size:12px; color:#555; line-height:1.5;"><strong>Voice session transcripts</strong> — read exactly what Kalam discussed with your child today.</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:flex-start;">
+            <div style="width:18px; height:18px; border-radius:50%; border:1.5px solid #1a3a2a; background:#e8f5ee; display:flex; align-items:center; justify-content:center; font-size:9px; color:#1a3a2a; flex-shrink:0; margin-top:2px;">✓</div>
+            <div style="font-size:12px; color:#555; line-height:1.5;"><strong>Home activity suggestions</strong> — practical things to do at home to reinforce learning.</div>
+          </div>
+        </div>
+      </div>
+      <!-- Dashboard preview right -->
+      <div style="background:#fff; border:1.5px solid #1a1a1a; overflow:hidden;">
+        <div style="background:#1a3a2a; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:13px; font-weight:700; color:#fff; font-family:'Courier New',monospace;">kalam.</div>
+          <div style="font-size:10px; color:rgba(255,255,255,0.4);">Parent view</div>
+        </div>
+        <div style="padding:12px 14px; border-bottom:1px solid #e2e2da; display:flex; gap:8px; align-items:center;">
+          <div style="width:30px; height:30px; border-radius:50%; background:#1a3a2a; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;">R</div>
+          <div>
+            <div style="font-size:12px; font-weight:700;">Riya Sharma</div>
+            <div style="font-size:10px; color:#aaa;">Grade 5 · CBSE · 🔥 14-day streak</div>
+          </div>
+        </div>
+        <div style="padding:12px 14px;">
+          <div style="display:flex; gap:8px; margin-bottom:8px;">
+            <div style="flex:1; background:#1a3a2a; padding:10px; text-align:center;">
+              <div style="font-size:24px; font-weight:700; color:#fff; font-family:'Courier New',monospace;">72</div>
+              <div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px; text-transform:uppercase; letter-spacing:.5px;">Exam readiness</div>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+              <div style="flex:1; background:#f4ede0; padding:8px;">
+                <div style="font-size:14px; font-weight:700; font-family:'Courier New',monospace;">4.2 hrs</div>
+                <div style="font-size:9px; color:#aaa;">Practice this week</div>
+              </div>
+              <div style="flex:1; background:#f4ede0; padding:8px;">
+                <div style="font-size:14px; font-weight:700; font-family:'Courier New',monospace;">89%</div>
+                <div style="font-size:9px; color:#aaa;">Multiplication ✓</div>
+              </div>
+            </div>
+          </div>
+          <!-- Alert pills -->
+          <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:8px;">
+            <div style="padding:5px 8px; background:#fdecea; color:#c0392b; font-size:10px; font-weight:700;">⚠ Equivalent Fractions — 6 errors</div>
+            <div style="padding:5px 8px; background:#fef3e2; color:#c4832a; font-size:10px; font-weight:700;">⚡ Improper Fractions — shaky</div>
+            <div style="padding:5px 8px; background:#e8f5ee; color:#2d6a4f; font-size:10px; font-weight:700;">✓ Multiplication — mastered</div>
+          </div>
+          <!-- Voice note -->
+          <div style="border-left:3px solid #e07b1a; padding:6px 8px; background:#fef3e2; font-size:10px; color:#5a4020; line-height:1.5;">
+            🎙️ <strong>Today:</strong> Riya asked "how can 2/4 and 3/6 be equal?" <em>Try roti analogy at home.</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:24px;"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 8: TESTIMONIALS
+  ══════════════════════════════════════ -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">08 — Testimonials</div>
+  </div>
+  <div class="wf-section" style="padding:56px 48px; background:#fff; text-align:center;">
+    <div class="wf-label">White · Centered header · 3 cards</div>
+    <div style="max-width:480px; margin:0 auto 36px;">
+      <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:#e07b1a; margin-bottom:8px;">What parents say</div>
+      <div style="font-size:20px; font-weight:700;">The tutor that's there <span style="font-style:italic;">every day</span></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; text-align:left;">
+      <!-- Card 1 -->
+      <div class="wf-box" style="padding:20px;">
+        <div style="color:#e07b1a; font-size:32px; line-height:1; margin-bottom:8px; font-family:serif;">"</div>
+        <div style="font-size:10px; color:#e07b1a; margin-bottom:6px;">★★★★★</div>
+        <div style="font-size:12px; color:#888; line-height:1.7; margin-bottom:16px; font-style:italic;">My daughter's maths score went from 58% to 81% in one term. She doesn't even realise she's studying.</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <div style="width:32px; height:32px; border-radius:50%; background:#e07b1a; color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;">SP</div>
+          <div>
+            <div style="font-size:11px; font-weight:700;">Sunita Prasad</div>
+            <div style="font-size:10px; color:#aaa;">Mother of Ananya · Delhi</div>
+          </div>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="wf-box" style="padding:20px;">
+        <div style="color:#e07b1a; font-size:32px; line-height:1; margin-bottom:8px; font-family:serif;">"</div>
+        <div style="font-size:10px; color:#e07b1a; margin-bottom:6px;">★★★★★</div>
+        <div style="font-size:12px; color:#888; line-height:1.7; margin-bottom:16px; font-style:italic;">I cancelled the Rs 4,000/month home tutor. The parent dashboard tells me more than the tutor ever did.</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <div style="width:32px; height:32px; border-radius:50%; background:#1a3a2a; color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;">RK</div>
+          <div>
+            <div style="font-size:11px; font-weight:700;">Rakesh Kumar</div>
+            <div style="font-size:10px; color:#aaa;">Father of Arjun · Bengaluru</div>
+          </div>
+        </div>
+      </div>
+      <!-- Card 3 — Hinglish -->
+      <div class="wf-box" style="padding:20px; border:1.5px solid #1a3a2a;">
+        <div style="font-size:9px; background:#e8f5ee; color:#1a3a2a; padding:2px 8px; display:inline-block; font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;">Hinglish testimonial</div>
+        <div style="color:#e07b1a; font-size:32px; line-height:1; margin-bottom:4px; font-family:serif;">"</div>
+        <div style="font-size:10px; color:#e07b1a; margin-bottom:6px;">★★★★★</div>
+        <div style="font-size:12px; color:#888; line-height:1.7; margin-bottom:16px; font-style:italic;">Mera beta sirf Hinglish mein baat karta hai. Pehli baar comfortable feel karta hai. WhatsApp report ne poori family ko convince kar diya.</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <div style="width:32px; height:32px; border-radius:50%; background:#1a2e6a; color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;">PM</div>
+          <div>
+            <div style="font-size:11px; font-weight:700;">Poonam Mehta</div>
+            <div style="font-size:10px; color:#aaa;">Mother of Kabir · Jaipur</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:24px;"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 9: PRICING
+  ══════════════════════════════════════ -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">09 — Pricing</div>
+  </div>
+  <div class="wf-section" style="padding:56px 48px; background:#f4ede0; text-align:center;">
+    <div class="wf-label">Warm cream · Centered · 3 price cards</div>
+    <div style="max-width:560px; margin:0 auto 36px;">
+      <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:#e07b1a; margin-bottom:8px;">Simple pricing</div>
+      <div style="font-size:20px; font-weight:700; margin-bottom:8px;">Less than Rs 100 a day. <span style="font-style:italic;">No tutor needed.</span></div>
+      <div style="font-size:12px; color:#888; line-height:1.7;">A home tutor in Delhi costs Rs 4,000–8,000/month. Kalam is less than the cost of a single session.</div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; max-width:780px; margin:0 auto; text-align:left;">
+      <!-- Free -->
+      <div class="wf-box" style="padding:24px;">
+        <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#aaa; margin-bottom:12px;">Free</div>
+        <div style="font-size:32px; font-weight:700; font-family:'Courier New',monospace; margin-bottom:4px;">Rs 0</div>
+        <div style="font-size:12px; color:#aaa; margin-bottom:4px;">forever</div>
+        <div style="font-size:11px; color:#aaa; margin-bottom:16px;">Chapters 1-2 · no card</div>
+        <div style="height:1px; background:#e2e2da; margin-bottom:16px;"></div>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Voice AI — 5 sessions/month</div>
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Chapters 1-2 only</div>
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Basic parent report</div>
+        </div>
+        <div class="wf-btn outline" style="width:100%; text-align:center;">Get started free</div>
+      </div>
+      <!-- Pro — featured -->
+      <div class="wf-box" style="padding:24px; border:2px solid #1a1a1a; position:relative;">
+        <div style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:#e07b1a; color:#fff; font-size:10px; font-weight:700; padding:3px 14px; letter-spacing:.5px; white-space:nowrap;">Most popular</div>
+        <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#aaa; margin-bottom:12px;">Pro</div>
+        <div style="font-size:32px; font-weight:700; font-family:'Courier New',monospace; margin-bottom:4px;">Rs 999</div>
+        <div style="font-size:12px; color:#aaa; margin-bottom:4px;">per month</div>
+        <div style="font-size:11px; color:#aaa; margin-bottom:16px;">Rs 8,999/year · save 25%</div>
+        <div style="height:1px; background:#e2e2da; margin-bottom:16px;"></div>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Unlimited voice AI sessions</div>
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Full syllabus — all chapters</div>
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Adaptive practice engine</div>
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Parent dashboard + alerts</div>
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Weekly WhatsApp report</div>
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Photo problem solver</div>
+        </div>
+        <div class="wf-btn" style="width:100%; text-align:center; background:#e07b1a; border-color:#e07b1a;">Start 7-day free trial</div>
+      </div>
+      <!-- Annual -->
+      <div class="wf-box" style="padding:24px;">
+        <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#aaa; margin-bottom:12px;">Annual</div>
+        <div style="font-size:32px; font-weight:700; font-family:'Courier New',monospace; margin-bottom:4px;">Rs 749</div>
+        <div style="font-size:12px; color:#aaa; margin-bottom:4px;">per month</div>
+        <div style="font-size:11px; color:#aaa; margin-bottom:16px;">Rs 8,999 billed yearly</div>
+        <div style="height:1px; background:#e2e2da; margin-bottom:16px;"></div>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Everything in Pro</div>
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Grades 5 + 6 included</div>
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Priority doubt support</div>
+          <div style="font-size:11px; color:#555; display:flex; gap:6px;"><span style="color:#52b788; font-weight:700;">✓</span> Progress certificate</div>
+        </div>
+        <div class="wf-btn outline" style="width:100%; text-align:center;">Get annual plan</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:24px;"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 10: FINAL CTA
+  ══════════════════════════════════════ -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">10 — Final CTA</div>
+  </div>
+  <div class="wf-section" style="padding:64px 48px; background:#0a1628; text-align:center; position:relative;">
+    <div class="wf-label" style="color:#333;">Dark navy · Centred · 2 CTA buttons</div>
+    <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:#e07b1a; margin-bottom:12px;">Start today</div>
+    <div style="font-size:22px; font-weight:700; color:#fff; max-width:500px; margin:0 auto 12px; line-height:1.2; font-family:'Courier New',monospace;">Give your child the tutor that <span style="font-style:italic; color:#f5a84a; font-family:'Courier New',monospace;">never gives up</span></div>
+    <div style="font-size:12px; color:#555; margin-bottom:28px; line-height:1.7;">7 days free. No credit card. Cancel anytime. First session takes 3 minutes.</div>
+    <div style="display:flex; gap:12px; justify-content:center;">
+      <div class="wf-btn" style="background:#e07b1a; border-color:#e07b1a; font-size:14px; padding:12px 28px;">Start free trial — it's free →</div>
+      <div class="wf-btn outline" style="border-color:#333; color:#666;">Talk to us on WhatsApp</div>
+    </div>
+  </div>
+
+  <div style="height:24px;"></div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 11: FOOTER
+  ══════════════════════════════════════ -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">11 — Footer</div>
+  </div>
+  <div class="wf-section" style="padding:20px 32px; background:#1a1a1a; display:flex; justify-content:space-between; align-items:center;">
+    <div style="font-size:16px; font-weight:700; color:#fff; font-family:'Courier New',monospace;">Kalam<span style="color:#e07b1a;">.</span></div>
+    <div style="display:flex; gap:24px;">
+      <span style="font-size:11px; color:#555;">Privacy</span>
+      <span style="font-size:11px; color:#555;">Terms</span>
+      <span style="font-size:11px; color:#555;">Contact</span>
+      <span style="font-size:11px; color:#555;">Blog</span>
+    </div>
+    <div style="font-size:11px; color:#444;">© 2025 Kalam Education Pvt. Ltd.</div>
+  </div>
+
+  <!-- ── Legend ── -->
+  <div style="margin-top:40px; border:1.5px solid #1a1a1a; padding:20px 24px; background:#fff;">
+    <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px; margin-bottom:12px; color:#1a1a1a;">Wireframe Legend</div>
+    <div style="display:flex; gap:32px; flex-wrap:wrap;">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div style="width:24px; height:16px; background:#fff; border:1.5px solid #1a1a1a;"></div>
+        <div style="font-size:11px; color:#888;">Content area / card</div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div style="width:24px; height:16px; background:#e2ddd8; border:1.5px solid #1a1a1a;"></div>
+        <div style="font-size:11px; color:#888;">Background / secondary</div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div style="width:24px; height:16px; background:#1a1a1a;"></div>
+        <div style="font-size:11px; color:#888;">Dark section (navy in prod)</div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div class="wf-img" style="width:40px; height:16px;"><span style="font-size:8px;">img</span></div>
+        <div style="font-size:11px; color:#888;">Image / media placeholder</div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div class="wf-btn" style="font-size:9px; padding:3px 8px;">CTA</div>
+        <div style="font-size:11px; color:#888;">Primary CTA button</div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div class="wf-btn outline" style="font-size:9px; padding:3px 8px;">CTA</div>
+        <div style="font-size:11px; color:#888;">Secondary / ghost button</div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div style="font-size:10px; color:#aaa; font-family:'Courier New',monospace; border:1px dashed #ccc; padding:1px 6px;">annotation</div>
+        <div style="font-size:11px; color:#888;">Developer / designer note</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:48px;"></div>
+
+</div><!-- end page-wrap -->
+
+</body>
+</html>
