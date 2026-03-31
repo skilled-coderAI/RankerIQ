@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: data.message,
       agent: data.agent,
+      session_id: data.session_id,
     });
   } catch (error: unknown) {
     const message =

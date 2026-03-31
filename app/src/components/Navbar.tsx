@@ -58,6 +58,14 @@ export default function Navbar() {
         </li>
         <li>
           <Link
+            href="/about"
+            className="text-[13px] text-white/60 hover:text-white transition-colors"
+          >
+            About
+          </Link>
+        </li>
+        <li>
+          <Link
             href="/learn"
             className="text-[13px] text-white/60 hover:text-white transition-colors"
           >

@@ -10,6 +10,14 @@ export default function Footer() {
         RankerIQ<span className="text-saffron">.</span>
       </Link>
       <ul className="flex gap-8 list-none">
+        <li>
+          <Link
+            href="/about"
+            className="text-[13px] text-white/40 hover:text-white/70 transition-colors"
+          >
+            About
+          </Link>
+        </li>
         {["Privacy", "Terms", "Contact", "Blog"].map((link) => (
           <li key={link}>
             <a

@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: rankeriq
+      POSTGRES_USER: rankeriq
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rankeriq_local_dev}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rankeriq"]
+      interval: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://rankeriq:${POSTGRES_PASSWORD:-rankeriq_local_dev}@postgres:5432/rankeriq
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      JWT_SECRET: ${JWT_SECRET}
+      RUST_LOG: info
+    ports:
+      - "127.0.0.1:8080:8080"
+
+  frontend:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-https://rankeriq.com}
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      BACKEND_URL: http://backend:8080
+      NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-https://rankeriq.com}
+      ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY}
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    depends_on:
+      - frontend
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+
+volumes:
+  pgdata:
