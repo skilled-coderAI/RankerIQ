@@ -184,9 +184,6 @@ export default function LoginPage() {
                 <PuterIcon />
               )}
               {puterLoading ? "Connecting..." : "Continue with Puter"}
-              <span className="ml-auto text-[10px] bg-indigo-400/20 text-indigo-300/70 px-1.5 py-0.5 rounded-full">
-                Free AI
-              </span>
             </button>
           </div>
 
@@ -280,9 +277,7 @@ export default function LoginPage() {
           </Link>
         </p>
 
-        <p className="text-center text-white/15 text-[11px] mt-4">
-          Puter sign-in gives your child free AI-powered learning credits
-        </p>
+
       </div>
     </div>
   );

@@ -178,6 +178,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const email = puterUser.email || `${puterUser.username}@puter.local`;
       const displayName = puterUser.username;
+      const derivedPassword = `puter_${puterUser.uuid}`;
+
+      const loginRes = await fetch(`${BACKEND_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: derivedPassword }),
+      }).catch(() => null);
+
+      if (loginRes && loginRes.ok) {
+        const data = await loginRes.json();
+        setUser(data.user);
+        setToken(data.token);
+        localStorage.setItem("rankeriq_token", data.token);
+        return null;
+      }
+
+      const signupRes = await fetch(`${BACKEND_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: displayName,
+          email,
+          password: derivedPassword,
+          role: "student",
+          grade: 9,
+          board: "CBSE",
+        }),
+      }).catch(() => null);
+
+      if (signupRes && signupRes.ok) {
+        const data = await signupRes.json();
+        setUser(data.user);
+        setToken(data.token);
+        localStorage.setItem("rankeriq_token", data.token);
+        return null;
+      }
 
       const syntheticUser: User = {
         id: `puter_${puterUser.uuid}`,
@@ -195,13 +231,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(syntheticUser);
       setToken(syntheticToken);
       localStorage.setItem("rankeriq_token", syntheticToken);
-
-      if (window.puter.kv) {
-        window.puter.kv
-          .set("rankeriq_last_login", new Date().toISOString())
-          .catch(() => {});
-      }
-
       return null;
     } catch (err: unknown) {
       if (err instanceof Error && err.message?.includes("cancel")) return null;
@@ -216,7 +245,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       typeof window !== "undefined" &&
       window.puter
     ) {
-      window.puter.auth.signOut().catch(() => {});
+      try {
+        const result = window.puter.auth.signOut();
+        if (result && typeof result.catch === "function") {
+          result.catch(() => {});
+        }
+      } catch {}
     }
     setUser(null);
     setToken(null);

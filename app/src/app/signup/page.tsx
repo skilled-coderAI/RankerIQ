@@ -194,9 +194,6 @@ export default function SignupPage() {
                 <PuterIcon />
               )}
               {puterLoading ? "Connecting..." : "Sign up with Puter"}
-              <span className="ml-auto text-[10px] bg-indigo-400/20 text-indigo-300/70 px-1.5 py-0.5 rounded-full">
-                Free AI
-              </span>
             </button>
           </div>
 
@@ -318,9 +315,7 @@ export default function SignupPage() {
           </Link>
         </p>
 
-        <p className="text-center text-white/15 text-[11px] mt-4">
-          Puter sign-up unlocks free AI tutoring powered by Puter Cloud
-        </p>
+
       </div>
     </div>
   );
