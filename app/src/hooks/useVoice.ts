@@ -43,6 +43,8 @@ const STT_LANG_MAP: Record<string, string> = {
   gujarati: "gu-IN",
 };
 
+export type MicPermission = "unknown" | "granted" | "denied" | "unavailable";
+
 export function useVoice(language: string = "hinglish") {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -50,6 +52,7 @@ export function useVoice(language: string = "hinglish") {
   const [autoSpeak, setAutoSpeak] = useState(false);
   const [ttsAvailable, setTtsAvailable] = useState(true);
   const [sttAvailable, setSttAvailable] = useState(false);
+  const [micPermission, setMicPermission] = useState<MicPermission>("unknown");
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -60,6 +63,23 @@ export function useVoice(language: string = "hinglish") {
       typeof window !== "undefined" &&
       ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
     setSttAvailable(hasSpeechRecognition);
+
+    if (!hasSpeechRecognition) {
+      setMicPermission("unavailable");
+      return;
+    }
+
+    if (typeof navigator !== "undefined" && navigator.permissions) {
+      navigator.permissions
+        .query({ name: "microphone" as PermissionName })
+        .then((status) => {
+          setMicPermission(status.state === "granted" ? "granted" : status.state === "denied" ? "denied" : "unknown");
+          status.onchange = () => {
+            setMicPermission(status.state === "granted" ? "granted" : status.state === "denied" ? "denied" : "unknown");
+          };
+        })
+        .catch(() => {});
+    }
   }, []);
 
   const stopSpeaking = useCallback(() => {
@@ -102,8 +122,15 @@ export function useVoice(language: string = "hinglish") {
         });
 
         if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || "TTS failed");
+          const text = await res.text();
+          let errMsg = "TTS failed";
+          try {
+            const err = JSON.parse(text);
+            errMsg = err.error ?? errMsg;
+          } catch {
+            if (text) errMsg = text;
+          }
+          throw new Error(errMsg);
         }
 
         const blob = await res.blob();
@@ -141,6 +168,7 @@ export function useVoice(language: string = "hinglish") {
   const startListening = useCallback(
     (onResult: (transcript: string) => void) => {
       if (!sttAvailable) return;
+      if (micPermission === "denied") return;
 
       stopSpeaking();
 
@@ -161,8 +189,11 @@ export function useVoice(language: string = "hinglish") {
         }
       };
 
-      recognition.onerror = () => {
+      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
         setIsListening(false);
+        if (event.error === "not-allowed" || event.error === "permission-denied") {
+          setMicPermission("denied");
+        }
       };
 
       recognition.onend = () => {
@@ -173,7 +204,7 @@ export function useVoice(language: string = "hinglish") {
       recognitionRef.current = recognition;
       recognition.start();
     },
-    [sttAvailable, stopSpeaking, language]
+    [sttAvailable, micPermission, stopSpeaking, language]
   );
 
   const stopListening = useCallback(() => {
@@ -202,6 +233,7 @@ export function useVoice(language: string = "hinglish") {
     autoSpeak,
     ttsAvailable,
     sttAvailable,
+    micPermission,
     speak,
     stopSpeaking,
     startListening,

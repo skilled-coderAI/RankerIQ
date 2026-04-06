@@ -1,17 +1,120 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path
+        d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"
+        fill="#4285F4"
+      />
+      <path
+        d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z"
+        fill="#34A853"
+      />
+      <path
+        d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z"
+        fill="#FBBC05"
+      />
+      <path
+        d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z"
+        fill="#EA4335"
+      />
+    </svg>
+  );
+}
+
+function PuterIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <rect width="24" height="24" rx="6" fill="#6366f1" />
+      <path
+        d="M7 8h10M7 12h7M7 16h4"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [puterLoading, setPuterLoading] = useState(false);
+  const { login, loginWithGoogle, loginWithPuter } = useAuth();
   const router = useRouter();
+  const googleInitialized = useRef(false);
+
+  useEffect(() => {
+    if (googleInitialized.current) return;
+
+    const initGoogle = () => {
+      if (!window.google || !GOOGLE_CLIENT_ID) return;
+      googleInitialized.current = true;
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: async (response) => {
+          setGoogleLoading(true);
+          setError("");
+          const err = await loginWithGoogle(response.credential);
+          setGoogleLoading(false);
+          if (err) {
+            setError(err);
+          } else {
+            router.push("/learn");
+          }
+        },
+        cancel_on_tap_outside: true,
+      });
+    };
+
+    if (window.google) {
+      initGoogle();
+    } else {
+      const interval = setInterval(() => {
+        if (window.google) {
+          initGoogle();
+          clearInterval(interval);
+        }
+      }, 200);
+      return () => clearInterval(interval);
+    }
+  }, [loginWithGoogle, router]);
+
+  const handleGoogleSignIn = () => {
+    if (!GOOGLE_CLIENT_ID) {
+      setError("Google Sign In is not configured. Set NEXT_PUBLIC_GOOGLE_CLIENT_ID in .env.local");
+      return;
+    }
+    if (!window.google) {
+      setError("Google Sign In is loading. Please try again in a moment.");
+      return;
+    }
+    setError("");
+    window.google.accounts.id.prompt();
+  };
+
+  const handlePuterSignIn = async () => {
+    setPuterLoading(true);
+    setError("");
+    const err = await loginWithPuter();
+    setPuterLoading(false);
+    if (err) {
+      setError(err);
+    } else {
+      router.push("/learn");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,86 +146,129 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white/[0.04] border border-white/10 rounded-2xl p-8 backdrop-blur-xl"
-        >
+        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
           <h2 className="font-[family-name:var(--font-display)] text-2xl font-bold text-white mb-6">
             Welcome back
           </h2>
 
           {error && (
-            <div className="bg-red-soft/20 border border-red-soft/30 text-red-soft text-[13px] px-4 py-2.5 rounded-lg mb-4">
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-[13px] px-4 py-2.5 rounded-lg mb-4">
               {error}
             </div>
           )}
 
-          <div className="space-y-4">
-            <div>
-              <label className="text-[11px] font-medium uppercase tracking-wider text-white/50 mb-1.5 block">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="parent@demo.com"
-                required
-                className="w-full bg-white/[0.06] border border-white/10 text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-saffron/50 focus:bg-white/[0.08] transition-all placeholder:text-white/20"
-              />
-            </div>
+          <div className="space-y-3 mb-6">
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={googleLoading || puterLoading}
+              className="w-full flex items-center justify-center gap-3 bg-white text-gray-800 py-3 rounded-xl text-sm font-semibold hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(255,255,255,0.18)] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {googleLoading ? (
+                <span className="w-4 h-4 border-2 border-gray-400 border-t-gray-800 rounded-full animate-spin" />
+              ) : (
+                <GoogleIcon />
+              )}
+              {googleLoading ? "Signing in..." : "Continue with Google"}
+            </button>
 
-            <div>
-              <label className="text-[11px] font-medium uppercase tracking-wider text-white/50 mb-1.5 block">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="w-full bg-white/[0.06] border border-white/10 text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-saffron/50 focus:bg-white/[0.08] transition-all placeholder:text-white/20"
-              />
+            <button
+              type="button"
+              onClick={handlePuterSignIn}
+              disabled={googleLoading || puterLoading}
+              className="w-full flex items-center justify-center gap-3 bg-indigo-500/15 border border-indigo-400/20 text-indigo-300 py-3 rounded-xl text-sm font-semibold hover:bg-indigo-500/25 hover:border-indigo-400/35 hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {puterLoading ? (
+                <span className="w-4 h-4 border-2 border-indigo-400/40 border-t-indigo-300 rounded-full animate-spin" />
+              ) : (
+                <PuterIcon />
+              )}
+              {puterLoading ? "Connecting..." : "Continue with Puter"}
+              <span className="ml-auto text-[10px] bg-indigo-400/20 text-indigo-300/70 px-1.5 py-0.5 rounded-full">
+                Free AI
+              </span>
+            </button>
+          </div>
+
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-white/[0.07]" />
+            </div>
+            <div className="relative flex justify-center">
+              <span className="px-3 bg-transparent text-white/25 text-[11px] uppercase tracking-widest">
+                or sign in with email
+              </span>
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-saffron text-white py-3 rounded-lg text-sm font-semibold mt-6 hover:bg-saffron-light hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(224,123,26,0.35)] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-          >
-            {loading ? "Signing in..." : "Sign in"}
-          </button>
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              <div>
+                <label className="text-[11px] font-medium uppercase tracking-wider text-white/50 mb-1.5 block">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="parent@demo.com"
+                  required
+                  className="w-full bg-white/[0.06] border border-white/10 text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-saffron/50 focus:bg-white/[0.08] transition-all placeholder:text-white/20"
+                />
+              </div>
 
-          <div className="mt-6 pt-5 border-t border-white/[0.06]">
-            <div className="text-[11px] text-white/30 text-center mb-3 uppercase tracking-wider">
-              Demo accounts
+              <div>
+                <label className="text-[11px] font-medium uppercase tracking-wider text-white/50 mb-1.5 block">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className="w-full bg-white/[0.06] border border-white/10 text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-saffron/50 focus:bg-white/[0.08] transition-all placeholder:text-white/20"
+                />
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail("student@demo.com");
-                  setPassword("demo1234");
-                }}
-                className="text-[11px] px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white/50 hover:text-white/70 hover:bg-white/[0.08] transition-all text-center"
-              >
-                Student login
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail("parent@demo.com");
-                  setPassword("demo1234");
-                }}
-                className="text-[11px] px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white/50 hover:text-white/70 hover:bg-white/[0.08] transition-all text-center"
-              >
-                Parent login
-              </button>
+
+            <button
+              type="submit"
+              disabled={loading || googleLoading || puterLoading}
+              className="w-full bg-saffron text-white py-3 rounded-lg text-sm font-semibold mt-6 hover:bg-saffron-light hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(224,123,26,0.35)] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </button>
+
+            <div className="mt-6 pt-5 border-t border-white/[0.06]">
+              <div className="text-[11px] text-white/30 text-center mb-3 uppercase tracking-wider">
+                Demo accounts
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail("student@demo.com");
+                    setPassword("demo1234");
+                  }}
+                  className="text-[11px] px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white/50 hover:text-white/70 hover:bg-white/[0.08] transition-all text-center"
+                >
+                  Student login
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail("parent@demo.com");
+                    setPassword("demo1234");
+                  }}
+                  className="text-[11px] px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white/50 hover:text-white/70 hover:bg-white/[0.08] transition-all text-center"
+                >
+                  Parent login
+                </button>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
 
         <p className="text-center text-white/30 text-[13px] mt-6">
           Don&apos;t have an account?{" "}
@@ -132,6 +278,10 @@ export default function LoginPage() {
           >
             Sign up free
           </Link>
+        </p>
+
+        <p className="text-center text-white/15 text-[11px] mt-4">
+          Puter sign-in gives your child free AI-powered learning credits
         </p>
       </div>
     </div>

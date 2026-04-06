@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 
@@ -21,6 +22,15 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <AuthProvider>{children}</AuthProvider>
+
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          strategy="afterInteractive"
+        />
+        <Script
+          src="https://js.puter.com/v2/"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );
