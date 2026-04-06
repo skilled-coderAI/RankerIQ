@@ -114,10 +114,12 @@ export function useVoice(language: string = "hinglish") {
       try {
         abortControllerRef.current = new AbortController();
 
+        const bcp47 = STT_LANG_MAP[language] || "hi-IN";
+
         const res = await fetch("/api/tts", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: cleanText }),
+          body: JSON.stringify({ text: cleanText, language: bcp47 }),
           signal: abortControllerRef.current.signal,
         });
 

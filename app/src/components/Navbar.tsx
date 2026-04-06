@@ -49,12 +49,12 @@ export default function Navbar() {
           </a>
         </li>
         <li>
-          <a
-            href="#pricing"
+          <Link
+            href="/feedback"
             className="text-[13px] text-white/60 hover:text-white transition-colors"
           >
-            Pricing
-          </a>
+            Feedback
+          </Link>
         </li>
         <li>
           <Link
